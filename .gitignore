@@ -1,0 +1,6 @@
+# Default ignored files
+/.idea
+/.oas-generator
+/config/common.js
+
+node_modules/

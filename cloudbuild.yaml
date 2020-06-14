@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:$BUILD_ID',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:${_ENV}',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:latest',
+         '.']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: [
+    '-n', '${_NAMESPACE}',
+    'set', 'image',
+    'deployment/talent-api',
+    'talent-api=gcr.io/$PROJECT_ID/talent-api:$BUILD_ID'
+  ]
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=cmp-jobs-2'
+
+images: ['gcr.io/$PROJECT_ID/talent-api']

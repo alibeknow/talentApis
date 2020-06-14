@@ -1,0 +1,56 @@
+{
+  "searchParameters": {
+    "q": "consectetur Ut",
+    "location": "eu ipsum",
+    "sortBy": "activityDate",
+    "page": 196,
+    "pageSize": 15,
+    "distance": -9419411,
+    "distanceUnit": "km",
+    "countryCode": ["ut", "ex nisi", "e", "elit incididunt qui", "veniam do voluptate ullamco"],
+    "hasEmail": false,
+    "hasPhoneNumber": false,
+    "willingToRelocate": true,
+    "searchType": "Integrated",
+    "company": "Ut ut veniam cupidatat labore",
+    "skills": "sit magna esse sint",
+    "input": "Ut ut",
+    "educationDegree": "masters",
+    "workPermit": "employment auth document",
+    "employmentType": "j-1",
+    "annualSalary": "eu culpa",
+    "hourlyRate": "Ut incididunt mollit ull",
+    "currencyCode": "CAD",
+    "lastActive": 6786924,
+    "yearsOfExperience": "ut dolor veniam sed",
+    "socialProfiles": ["proident Duis"],
+    "likelyToSwitch": false,
+    "facets": "employmentType",
+    "sortByDirection": "desc",
+    "excludeThirdParty": true,
+    "dateResumeLastUpdated": 53777733,
+    "companyKeyword": "sed cupidatat",
+    "skillsKeyword": "minim consequat",
+    "jobTitleKeyword": "dolore aliqua elit aliquip",
+    "onlyWithSecurityClearance": true,
+    "language": "ex aute in",
+    "excludeFounders": true,
+    "hasPatent": true,
+    "skillYearsOfExperience": ["proident ex", "in incididunt ut", "eu consequat ad id"],
+    "workPermitLocation": "ipsum ut aliqua",
+    "likelyToMove": "incididunt in aliqua",
+    "companyCurrent": true,
+    "locations": [
+      {
+        "value": "elit id"
+      },
+      {
+        "value": "non id"
+      },
+      {
+        "value": "ipsum qui incididunt pariatur",
+        "distance": 62646171
+      }
+    ]
+  }
+}
