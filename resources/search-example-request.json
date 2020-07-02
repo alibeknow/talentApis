@@ -1,0 +1,29 @@
+{
+  "SearchRequest": {
+    "country": "US",
+    "searchType": "Semantic",
+    "jobTitle": "Java Programmer",
+    "jobDescription": "Java XML Spring",
+    "locations": [
+      {
+        "city": "Waltham",
+        "state": "CO"
+      }
+    ],
+    "skills": [
+      {
+        "name": "Java",
+        "years": "5"
+      }
+    ],
+    "yearsOfExperience": {
+      "expression": 6
+    },
+    "keywords": {
+      "job": "java",
+      "skills": "java"
+    },
+    "page": 1,
+    "pageSize": 3
+  }
+}

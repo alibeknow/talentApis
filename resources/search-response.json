@@ -1,0 +1,70 @@
+{
+  "originalCriteria": {}
+  "searchCriteria": {}
+  "boards": [
+    {
+      "id": 0,
+      "name": "string",
+      "matched": 0
+    }
+  ],
+  "candidates": [
+    {
+      "identity": {
+        "seekerRefCode": "string",
+        "textResumeID": "string",
+        "resumeModifiedDate": "2018-12-14T17:12:12.730Z",
+        "md5EmailAddress": "string",
+        "emailAddress": "string",
+        "name": "string"
+      },
+      "location": {
+        "city": "string",
+        "state": "string",
+        "postalCode": "string",
+        "country": "string",
+        "willRelocate": true,
+        "workAuthorizations": [
+          {
+            "authorization": "string",
+            "country": "string"
+          }
+        ]
+      },
+      "degree": "string",
+      "yearsOfExperience": 0,
+      "relevance": {
+        "score": 0,
+        "experience": {
+          "title": {
+            "name": "string",
+            "matched": "string"
+          },
+          "company": {
+            "name": "string",
+            "matched": "string"
+          },
+          "start": "2018-12-14T17:12:12.730Z",
+          "end": "2018-12-14T17:12:12.730Z"
+        },
+        "skills": [
+          {
+            "name": "string",
+            "yearsOfExperience": 0,
+            "lastUsed": "2018-12-14T17:12:12.730Z",
+            "matched": "string"
+          }
+        ]
+      },
+      "veteran": true,
+      "viewed": true,
+      "lastActive": "2018-12-14T17:12:12.730Z",
+      "boards": [
+        {
+          "id": 0,
+          "name": "string"
+        }
+      ]
+    }
+  ]
+}

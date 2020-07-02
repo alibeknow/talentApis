@@ -1,0 +1,6 @@
+# Default ignored files
+/.idea
+/.oas-generator
+tmp/
+package-lock.json
+node_modules/

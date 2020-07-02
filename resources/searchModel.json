@@ -1,0 +1,75 @@
+{
+  "country": string,
+  "searchType": searchType,
+  "resumeId": { "monster": string, "dice": string, "lensa": string },
+  "jobTitle": string,
+  "jobDescription": string,
+  "locations": [
+    {
+      "city": string,
+      "state": string,
+      "postalCode": string,
+      "radius": int,
+      "radiusUnit": string,
+      "locationExpression": string
+    }
+  ],
+  "skills": [
+    {
+      "name": string,
+      "years": "required || nice to have"
+    }
+  ],
+  "yearsOfExperience": {
+    "expression": string,
+    "importance": "nice to have || Required"
+  },
+  "education": {
+    "schools": [string],
+    "degrees": { "degreeName": string, "importance": "nice to have || Required" },
+    "university": { "name": "cambridge", "specialization": "Computer Science" }
+  },
+  "companies": string,
+  "lastActiveMaximumAge": integer,
+  "resumeUpdatedMaximumAge": integer,
+  "resumeUpdatedMinimumAge": integer,
+  "importance": "HighSchool Or Equivalent",
+  "willingnessToRelocate": true,
+  "willingnessToTravel": "NoTravelRequired",
+  "candidateName": string,
+  "careerLevels": "Presidend",
+  "jobTypes": "Permament",
+  "veteranCandidates": boolean,
+  "salary": {
+    "minimum": integer,
+    "maximum": integer,
+    "hourlyRate": int,
+    "currencyAbbrev": string
+  },
+  "workAuthorizations": [
+    {
+      "countryAbbrev": string,
+      "workStatus": AuthorizedToWorkForAnyEmployer
+    }
+  ],
+  "keywords": {
+    "job": string,
+    "company": string,
+    "skills": string
+  },
+  "page": 196,
+  "pageSize": 15,
+  "sortBy": activityDate,
+  "sortByDirection": "desc",
+  "hasEmail": true,
+  "hasPhoneNumber": true,
+  "socialProfiles": string,
+  "language": "russian, englush",
+  "skillYearsOfExperience": ["PHP|5"],
+  "jobTitleKeyword": "string",
+  "skillsKeyword": string,
+  "companyKeyWord": string,
+  "jobTensure": integer,
+  "excludeFounders": true,
+  "hasPatent": true
+}

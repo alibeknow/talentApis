@@ -1,0 +1,25 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:$BUILD_ID',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:$SHORT_SHA',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:latest',
+         '--tag=gcr.io/$PROJECT_ID/talent-api:$_ENV',
+         '--build-arg','"MYSQL_HOST=$_MYSQL_HOST"',
+         '--build-arg', '"MYSQL_DATABASE=$_MYSQL_DATABASE"',
+         '--build-arg', '"MYSQL_USER=$_MYSQL_USER"',
+         '--build-arg', '"MYSQL_PASSWORD=$_MYSQL_PASSWORD"',
+         '--build-arg', '"MYSQL_PORT=$_MYSQL_PORT"',
+         '.']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: [
+    '-n', '${_NAMESPACE}',
+    'set', 'image',
+    'deployment/talent-api',
+    'talent-api=gcr.io/$PROJECT_ID/talent-api:$SHORT_SHA'
+  ]
+
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+images: ['gcr.io/$PROJECT_ID/talent-api']

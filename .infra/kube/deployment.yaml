@@ -1,0 +1,67 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: talent-api
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: talent-api
+    spec:
+      containers:
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances=glo-api-231017:us-central1:glo-net-dev=tcp:3306",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 10
+      - name: talent-api
+        image: gcr.io/glo-api-231017/talent-api
+        imagePullPolicy: Always
+        env:
+        - name: RESUME_PARSER_URL
+          value: "http://66.175.212.149:8080/v1/base64/upload"
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: hostname
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: dbname
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-db-credentials
+              key: password
+        ports:
+        - containerPort: 8080
+          name: "talent-api"
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: cloudsql
+          emptyDir:
+

@@ -1,0 +1,105 @@
+{
+  "country": "string",
+  "searchType": "JobDetail",
+  "resumeBoardId": 0,
+  "jobDetail": {
+    "jobId": "string",
+    "jobTitle": "string",
+    "jobDescription": "string",
+    "locations": [
+      {
+        "city": "string",
+        "state": "string",
+        "postalCode": "string",
+        "radius": 0,
+        "radiusUnit": "string",
+        "locationExpression": "string"
+      }
+    ],
+    "jobDescriptionBase64": "string"
+  },
+  "semantic": {
+    "jobTitles": "string",
+    "skills": [
+      {
+        "name": "string",
+        "importance": "Required"
+      }
+    ],
+    "locations": [
+      {
+        "city": "string",
+        "state": "string",
+        "postalCode": "string",
+        "radius": 0,
+        "radiusUnit": "string",
+        "locationExpression": "string"
+      }
+    ],
+    "yearsOfExperience": {
+      "expression": "string",
+      "importance": "NiceToHave"
+    },
+    "schools": ["string"],
+    "degrees": {
+      "degreeName": "string",
+      "importance": "NiceToHave"
+    },
+    "companies": ["string"],
+    "jobTenure": 0,
+    "lastActiveMaximumAge": 0,
+    "resumeUpdatedMaximumAge": 0,
+    "resumeUpdatedMinimumAge": 0,
+    "resumeValues": ["string"],
+    "importance": "HighSchoolOrEquivalent",
+    "willingnessToRelocate": true,
+    "willingnessToTravel": "NoTravelRequired",
+    "candidateName": "string",
+    "careerLevels": "President",
+    "jobTypes": "WantsPermanent",
+    "veteranCandidates": true,
+    "securityClearances": [
+      {
+        "countryAbbrev": "string",
+        "clearanceId": 0
+      }
+    ],
+    "languageProficiencyLevels": [
+      {
+        "languageCode": "string",
+        "proficiency": "Unknown"
+      }
+    ],
+    "salary": {
+      "minimum": 0,
+      "maximum": 0,
+      "currencyAbbrev": "string",
+      "includeResumesWithoutSalary": true
+    },
+    "workAuthorizations": [
+      {
+        "countryAbbrev": "string",
+        "workStatus": "AuthorizedToWorkForAnyEmployer"
+      }
+    ],
+    "legalStatuses": [
+      {
+        "countryAbbrev": "string",
+        "legalStatusName": "Citizen"
+      }
+    ],
+    "keywords": ["string"],
+    "booleanExpression": {
+      "expression": "string",
+      "importance": "Required"
+    },
+    "channelId": 0,
+    "seekerRefCodes": ["string"],
+    "requisitionCodes": ["string"],
+    "resumeSourceIds": [0],
+    "customField": {
+      "id": 0,
+      "values": [0]
+    }
+  }
+}

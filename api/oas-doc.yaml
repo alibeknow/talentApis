@@ -1,0 +1,1379 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: GLO Talent API
+  description: GLO Talent API
+servers:
+  #  - description: SwaggerHub API Auto Mocking
+  #    url: 'https://virtserver.swaggerhub.com/abogatyrenko/talent-service/1.0.0'
+  #  - url: 'https://api.talent.net/v1'
+  #    description: Production server
+  - url: 'http://talent-dev.api.glo.net/v1'
+    description: Production server
+  - url: 'http://localhost:8080/v1'
+    description: Local DEV server
+paths:
+  /candidates/queries:
+    post:
+      summary: Candidate Search
+      x-router-controller: candidateController
+      operationId: candidatesQueriesPOST
+      requestBody:
+        $ref: '#/components/requestBodies/SearchRequestBody'
+      parameters:
+        - name: source
+          description: 'Page number to be retrieved, default 1'
+          in: query
+          schema:
+            type: string
+            enum: ['dice', 'monster', 'all']
+            default: all
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Candidates deatils
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /candidates/{textResumeId}:
+    get:
+      summary: Candidate Details
+      x-router-controller: candidateController
+      operationId: candidatesGET
+      parameters:
+        - name: textResumeId
+          description: >-
+            Text resume ID of the candidate. This ID is found in the search
+            response, default 1
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resumeBoardId
+          description: 'The ID of the Board to get the candidate from, default 1'
+          in: query
+          schema:
+            type: integer
+        - name: verbose
+          description: >-
+            If true it will include the text resume and the actual resume
+            document in false the response
+          in: query
+          schema:
+            type: boolean
+            default: true
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Candidates info list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateDetailResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            The resource cannot be found. Typically, this would apply when
+            searching for a particular job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /diceCandidates/{textResumeId}:
+    get:
+      summary: dice Details
+      x-router-controller: diceController
+      operationId: diceCandidatesGET
+      parameters:
+        - name: textResumeId
+          description: >-
+            Text resume ID of the candidate. This ID is found in the search
+            response, default 1
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Candidates info list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateDetailResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: >-
+            The resource cannot be found. Typically, this would apply when
+            searching for a particular job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+
+  /feeds/processing:
+    post:
+      summary: Process Feed
+      x-router-controller: feedController
+      operationId: feedProcessPOST
+      parameters:
+        - name: feedName
+          description: 'name of feed'
+          in: query
+          schema:
+            type: string
+        - name: url
+          description: 'Feed url (only url.xml.gz)'
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: lastUpdateDays
+          description: 'days of update CV MAX 365 MIN 1'
+          in: query
+          schema:
+            type: integer
+            default: 14
+            minimum: 1
+            maximum: 365
+        - name: candidateQuantityPerJob
+          description: 'How many candidates job must extract MIN 1 MAX 25 DEFAULT 3'
+          in: query
+          schema:
+            type: integer
+            default: 3
+            minimum: 1
+            maximum: 25
+        - name: parallelProcess
+          description: 'parallel process of work max 2000 default 500 min 1'
+          in: query
+          schema:
+            type: integer
+            default: 25
+            minimum: 1
+            maximum: 25
+        - name: noImportResume
+          description: 'doesnt take detail cv only search'
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: source
+          description: 'Page number to be retrieved, default 1'
+          in: query
+          schema:
+            type: string
+            enum: ['dice', 'monster']
+            default: monster
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Process Feed
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /feeds/processing/{id}:
+    get:
+      summary: Process Feed
+      x-router-controller: feedController
+      operationId: feedProcessByIdGET
+      parameters:
+        - name: id
+          description: 'Feed Process Id'
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Process Feed
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /feeds/processing/update:
+    post:
+      summary: Candidate Search
+      x-router-controller: feedController
+      operationId: feedProcessUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: # <!--- form field name
+                  type: integer
+                active: # <!--- form field name
+                  type: integer
+                  maximum: 1
+                  minimum: 0
+                status: # <!--- form field name
+                  type: string
+              required:
+                - id
+                - status
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Candidates deatils
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /feed/processing:
+    get:
+      summary: Process Feeds
+      x-router-controller: feedController
+      operationId: feedProcessAllGET
+      parameters:
+        - name: status
+          description: status of feed
+          in: query
+          schema:
+            type: string
+            enum: ['error', 'interrupted', 'stopped', 'complete', 'in_progress']
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Process Feeds
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /feeds/processing/{id}/raw-candidates:
+    get:
+      summary: Process Feeds
+      x-router-controller: feedController
+      operationId: feedProcessRawCandidatesGET
+      parameters:
+        - name: id
+          description: 'Feed Process Id'
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          description: 'number of page'
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: size
+          description: number of elements per page
+          in: query
+          schema:
+            default: 20
+            type: integer
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Raw Candidates
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /raw-candidates/{id}:
+    get:
+      summary: Raw candidate info
+      x-router-controller: rawCandidateController
+      operationId: rawCandidateByIdGET
+      parameters:
+        - name: id
+          description: 'Raw Candidate Id'
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: Raw Candidate Info
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /log/getAll:
+    get:
+      summary: Get All logs
+      x-router-controller: logController
+      operationId: logGetAll
+      parameters:
+        - name: page
+          description: 'Raw Candidate Id'
+          in: query
+          required: true
+          schema:
+            default: 1
+            type: integer
+        - name: pageSize
+          description: 'Raw Candidate Id'
+          in: query
+          required: true
+          schema:
+            default: 20
+            type: integer
+        - name: logName
+          description: 'Raw Candidate Id'
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ['success', 'Matcherror', 'xmlParseError', 'error', 'requestError']
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /config/getAll:
+    get:
+      summary: Get All Configs
+      x-router-controller: configController
+      operationId: configGetAll
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /config/get:
+    get:
+      summary: Get Config
+      x-router-controller: configController
+      operationId: configGET
+      parameters:
+        - name: name
+          description: 'name of config options'
+          in: query
+          schema:
+            type: string
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /config/update:
+    post:
+      summary: update config
+      x-router-controller: configController
+      operationId: configUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: # <!--- form field name
+                  type: integer
+                name: # <!--- form field name
+                  type: string
+                data: # <!--- form field name
+                  type: string
+              required:
+                - id
+                - status
+                - data
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /config/create:
+    post:
+      summary: create config
+      x-router-controller: configController
+      operationId: configCreate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: # <!--- form field name
+                  type: integer
+                name: # <!--- form field name
+                  type: string
+                data: # <!--- form field name
+                  type: string
+              required:
+                - id
+                - status
+                - data
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+  /config/refreshLimit:
+    post:
+      summary: refreshLimit config
+      x-router-controller: configController
+      operationId: refreshLimit
+      parameters:
+        - name: source
+          description: 'source for update'
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ['monster', 'dice', 'lensa']
+        - name: name
+          description: 'field which we must update for 0'
+          in: query
+          schema:
+            type: string
+            enum: ['currentTotal', 'totalLimit', 'days', 'currentDay', 'month', 'currentMonth']
+      responses:
+        '200':
+          description: config options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          description: There was a problem with the input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '403':
+          description: >-
+            The authenticated user does not have access to perform given
+            operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '404':
+          description: The jobAd corresponding to the textResumeId parameter was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+        '500':
+          description: There was an error processing your request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+components:
+  requestBodies:
+    SearchRequestBody:
+      description: Candidate Search
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SearchRequest'
+  schemas:
+    SearchRequest:
+      type: object
+      properties:
+        country:
+          type: string
+        searchType:
+          type: string
+        resumeId:
+          type: object
+          properties:
+            monster:
+              type: string
+            dice:
+              type: string
+            lensa:
+              type: string
+        jobTitle:
+          type: string
+        jobDescription:
+          type: string
+        locations:
+          type: object
+          required:
+            - city
+            - state
+          properties:
+            city:
+              type: string
+            state:
+              type: string
+            postalCode:
+              type: string
+            radius:
+              type: integer
+            radiusUnit:
+              type: string
+            locationExpression:
+              type: string
+        skills:
+          type: object
+          properties:
+            name:
+              type: string
+            years:
+              type: integer
+        yearsOfExperience:
+          type: object
+          properties:
+            expression:
+              type: string
+            importance:
+              type: string
+        education:
+          type: object
+          properties:
+            schools:
+              type: string
+            degrees:
+              type: object
+              properties:
+                degreeName:
+                  type: string
+                importance:
+                  type: string
+            university:
+              type: object
+              properties:
+                name:
+                  type: string
+                specialization:
+                  type: string
+        companies:
+          type: string
+        lastActiveMaximumAge:
+          type: integer
+        resumeUpdatedMaximumAge:
+          type: integer
+        resumeUpdatedMinimumAge:
+          type: integer
+        willingnessToRelocate:
+          type: boolean
+        willingnessToTravel:
+          type: string
+        candidateName:
+          type: integer
+        careerLevels:
+          type: integer
+        jobTypes:
+          type: integer
+        veteranCandidates:
+          type: boolean
+        salary:
+          type: object
+          properties:
+            minimum:
+              type: integer
+            maximum:
+              type: integer
+            hourlyRate:
+              type: integer
+            currencyAbbrev:
+              type: string
+        workAuthorizations:
+          type: object
+          properties:
+            countryAbbrev:
+              type: string
+            workStatus:
+              type: string
+        keywords:
+          type: object
+          properties:
+            job:
+              type: string
+            company:
+              type: string
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        sortBy:
+          type: string
+        sortByDirection:
+          type: string
+        hasEmail:
+          type: boolean
+        hasPhoneNumber:
+          type: boolean
+        socialProfiles:
+          type: string
+        language:
+          type: string
+        skillYearsOfExperience:
+          type: string
+        jobTensure:
+          type: integer
+        excludeFounders:
+          type: boolean
+        hasPatent:
+          type: boolean
+    SearchResponse:
+      type: object
+      properties:
+        originalCriteria:
+          type: object
+        searchCriteria:
+          type: object
+        boards:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              matched:
+                type: integer
+        candidates:
+          type: array
+          items:
+            type: object
+            properties:
+              identity:
+                type: object
+                properties:
+                  seekerRefCode:
+                    type: string
+                  textResumeID:
+                    type: string
+                  resumeModifiedDate:
+                    type: string
+                  md5EmailAddress:
+                    type: string
+                  emailAddress:
+                    type: string
+                  name:
+                    type: string
+              location:
+                type: object
+                properties:
+                  city:
+                    type: string
+                  state:
+                    type: string
+                  postalCode:
+                    type: string
+                  country:
+                    type: string
+                  willRelocate:
+                    type: boolean
+                  workAuthorizations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        authorization:
+                          type: string
+                        country:
+                          type: string
+              degree:
+                type: string
+              yearsOfExperience:
+                type: number
+              relevance:
+                type: object
+                properties:
+                  score:
+                    type: number
+                  experience:
+                    type: object
+                    properties:
+                      title:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          matched:
+                            type: string
+                      company:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          matched:
+                            type: string
+                      start:
+                        type: string
+                      end:
+                        type: string
+                  skills:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        yearsOfExperience:
+                          type: number
+                        lastUsed:
+                          type: string
+                        matched:
+                          type: string
+              veteran:
+                type: boolean
+              viewed:
+                type: boolean
+              lastActive:
+                type: string
+              boards:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+    CandidateDetailResponse:
+      type: object
+      properties:
+        identity:
+          type: object
+          properties:
+            seekerRefCode:
+              type: string
+            textResumeID:
+              type: string
+            resumeModifiedDate:
+              type: string
+            md5EmailAddress:
+              type: string
+            emailAddress:
+              type: string
+            name:
+              type: string
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+            state:
+              type: string
+            postalCode:
+              type: string
+            country:
+              type: string
+            willRelocate:
+              type: boolean
+            workAuthorizations:
+              type: array
+              items:
+                type: object
+                properties:
+                  authorization:
+                    type: string
+                  country:
+                    type: string
+        yearsOfExperience:
+          type: number
+        relevance:
+          type: object
+          properties:
+            score:
+              type: number
+            experience:
+              type: object
+              properties:
+                title:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    matched:
+                      type: string
+                company:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    matched:
+                      type: string
+                start:
+                  type: string
+                end:
+                  type: string
+            skills:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  yearsOfExperience:
+                    type: number
+                  lastUsed:
+                    type: string
+                  matched:
+                    type: string
+        veteran:
+          type: boolean
+        viewed:
+          type: boolean
+        lastActive:
+          type: string
+        boards:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+        resumeTitle:
+          type: string
+        securityClearance:
+          type: object
+          properties:
+            country:
+              type: string
+            clearance:
+              type: string
+        source:
+          type: string
+        targetJobTitle:
+          type: string
+        desiredSalary:
+          type: object
+          properties:
+            min:
+              type: string
+            max:
+              type: string
+            period:
+              type: string
+            currency:
+              type: string
+        phoneNumbers:
+          type: array
+          items:
+            type: object
+            properties:
+              phoneNumberValue:
+                type: string
+              priority:
+                type: string
+              type:
+                type: string
+        willTravel:
+          type: boolean
+        highestEducationDegree:
+          type: string
+        educationalHistory:
+          type: array
+          items:
+            type: object
+            properties:
+              schoolName:
+                type: string
+              degree:
+                type: string
+              majors:
+                type: array
+                items:
+                  type: string
+              start:
+                type: string
+              end:
+                type: string
+        externalRequisitions:
+          type: array
+          items:
+            type: string
+        resumeModifiedDate:
+          type: string
+        resume:
+          type: string
+        resumeDocument:
+          type: object
+          properties:
+            fileName:
+              type: string
+            fileContentType:
+              type: string
+            file:
+              type: string
+    JobDetail:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          nullable: true
+        jobTitle:
+          type: string
+          description: Title of the job. Multiple titles may be separated by commas
+          nullable: true
+        jobDescription:
+          type: string
+          description: >-
+            Full text of the Job Description. The text may contain HTML. Special
+            characters need to be escaped to comply with standard JSON encoding
+          nullable: true
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        jobDescriptionBase64:
+          type: string
+          nullable: true
+    Location:
+      type: object
+      properties:
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        radius:
+          type: integer
+          nullable: true
+        radiusUnit:
+          type: string
+          nullable: true
+        locationExpression:
+          type: string
+          description: >-
+            This field is cannot be used in combination with the other fields.
+            The encoded location expression may contain the city, state, postal
+            code or other location description (ex Los Angeles County, CA).
+            Multiple expressions are comma separated. Radius may be included in
+            the expression or radius may be used
+          nullable: true
+    Error:
+      type: object
+      required:
+        - status
+        - id
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+        error:
+          type: string
+        warning:
+          type: string
+        modelstate:
+          type: object
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: api_key
+      in: query
+    BearerAuth:
+      type: http
+      scheme: bearer
